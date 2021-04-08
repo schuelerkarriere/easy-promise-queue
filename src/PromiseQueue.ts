@@ -5,7 +5,7 @@ interface IPromiseQueueOpts {
 type PromiseThunk = () => Promise<any>;
 
 export default class PromiseQueue {
-  private _queue: Array<() => any>;
+  private _queue: (() => any)[];
   private _pause: boolean;
   private _ongoingCount: number;
   private readonly _concurrency: number;
@@ -32,6 +32,14 @@ export default class PromiseQueue {
   public resume() {
     this._pause = false;
     this._next();
+  }
+
+  /**
+   * Clear current queue
+   */
+  public clear() {
+    this._queue = []
+    this._ongoingCount = 0
   }
 
   public add(fn: PromiseThunk | PromiseThunk[]): PromiseQueue | TypeError {
